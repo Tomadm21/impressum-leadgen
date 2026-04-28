@@ -5,8 +5,11 @@ description: "Impressum LeadGen: scrape company Impressum pages, ICP-score again
 
 The user has invoked the Impressum LeadGen plugin.
 
-**Plugin scripts live at:**
-`~/.claude/plugins/cache/impressum-leadgen-local/impressum-leadgen/1.0.0/scripts/`
+**First, locate the plugin scripts directory (works on any machine):**
+```bash
+SCRIPT=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/impressum_scraper.py" 2>/dev/null | head -1)
+REQ=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/requirements.txt" 2>/dev/null | head -1)
+```
 
 Parse their subcommand:
 - `/impressum scan <source> [options]` — Run the full pipeline (ICP filter + Impressum scrape)
@@ -30,16 +33,20 @@ If no subcommand is given, ask: scan, setup, or status?
 **What to do:**
 
 1. Confirm the source with the user if not provided.
-2. Build the command:
+2. Locate the script:
+   ```bash
+   SCRIPT=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/impressum_scraper.py" 2>/dev/null | head -1)
    ```
-   python3 ~/.claude/plugins/cache/impressum-leadgen-local/impressum-leadgen/1.0.0/scripts/impressum_scraper.py <source> [flags]
+3. Build the command:
+   ```bash
+   python3 "$SCRIPT" <source> [flags]
    ```
    For CSV: add `--output-csv ergebnisse.csv` unless user specifies otherwise.
    For Google Sheets: requires `--credentials <path>` — ask user for credentials.json path if not provided.
 
-3. Run the command using Bash. Stream output so the user sees progress.
+4. Run the command using Bash. Stream output so the user sees progress.
 
-4. When complete, summarize:
+5. When complete, summarize:
    - Total URLs processed
    - How many passed ICP filter (score ≥ 40)
    - How many had status "OK" (full extraction success)
@@ -49,15 +56,18 @@ If no subcommand is given, ask: scan, setup, or status?
 
 ## /impressum setup
 
-1. Run:
+1. Locate requirements:
    ```bash
-   pip install -r ~/.claude/plugins/cache/impressum-leadgen-local/impressum-leadgen/1.0.0/scripts/requirements.txt
+   REQ=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/requirements.txt" 2>/dev/null | head -1)
    ```
-2. Check that `~/.env` contains `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`.
-   Run: `grep -c "CLOUDFLARE_ACCOUNT_ID\|CLOUDFLARE_API_TOKEN" ~/.env`
+2. Run: `pip install -r "$REQ"`
+3. Check that `~/.env` contains `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`:
+   ```bash
+   grep -c "CLOUDFLARE_ACCOUNT_ID\|CLOUDFLARE_API_TOKEN" ~/.env
+   ```
    If count < 2: tell user to add them to `~/.env`.
-3. Optionally check that `claude_agent_sdk` is importable: `python3 -c "from claude_agent_sdk import query"`
-4. Report setup status in a clean summary.
+4. Check Claude SDK: `python3 -c "from claude_agent_sdk import query; print('OK')" 2>&1`
+5. Report setup status in a clean summary.
 
 ---
 
@@ -67,4 +77,8 @@ If no subcommand is given, ask: scan, setup, or status?
 2. Check key deps: `pip show gspread requests beautifulsoup4 python-dotenv 2>&1 | grep -E "^(Name|Version|not found)"`
 3. Check env vars: `grep -c "CLOUDFLARE_ACCOUNT_ID\|CLOUDFLARE_API_TOKEN" ~/.env 2>/dev/null || echo "0"`
 4. Check Claude SDK: `python3 -c "from claude_agent_sdk import query; print('OK')" 2>&1`
-5. Report all findings in a clean table.
+5. Show script location:
+   ```bash
+   find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/impressum_scraper.py" 2>/dev/null | head -1
+   ```
+6. Report all findings in a clean table.

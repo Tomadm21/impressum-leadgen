@@ -5,10 +5,15 @@ description: "Impressum LeadGen: scrape company Impressum pages, ICP-score again
 
 The user has invoked the Impressum LeadGen plugin.
 
-**First, locate the plugin scripts directory (works on any machine):**
+**First, locate the plugin scripts directory and Python interpreter (works on any machine):**
 ```bash
 SCRIPT=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/impressum_scraper.py" 2>/dev/null | head -1)
 REQ=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/requirements.txt" 2>/dev/null | head -1)
+PYTHON=$(which python3 2>/dev/null || echo "python3")
+# Verify packages are accessible; if not, use the full pyenv path
+if ! "$PYTHON" -c "import gspread" 2>/dev/null; then
+  PYTHON=$(find ~/.pyenv/versions -name "python3" -path "*/bin/python3" 2>/dev/null | sort -V | tail -1)
+fi
 ```
 
 Parse their subcommand:
@@ -39,7 +44,7 @@ If no subcommand is given, ask: scan, setup, or status?
    ```
 3. Build the command:
    ```bash
-   python3 "$SCRIPT" <source> [flags]
+   "$PYTHON" "$SCRIPT" <source> [flags]
    ```
    For CSV: add `--output-csv ergebnisse.csv` unless user specifies otherwise.
    For Google Sheets: requires `--credentials <path>` — ask user for credentials.json path if not provided.
@@ -60,7 +65,7 @@ If no subcommand is given, ask: scan, setup, or status?
    ```bash
    REQ=$(find ~/.claude/plugins/cache -path "*/impressum-leadgen/*/scripts/requirements.txt" 2>/dev/null | head -1)
    ```
-2. Run: `pip install -r "$REQ"`
+2. Run: `"$PYTHON" -m pip install -r "$REQ"`
 3. Check that `~/.env` contains `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`:
    ```bash
    grep -c "CLOUDFLARE_ACCOUNT_ID\|CLOUDFLARE_API_TOKEN" ~/.env

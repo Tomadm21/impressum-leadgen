@@ -14,8 +14,9 @@ extraction (regex + Claude fallback) → Google Sheets / CSV export.
 
 ## Script Location
 
-```
-~/.claude/plugins/cache/impressum-leadgen-local/impressum-leadgen/1.0.0/scripts/impressum_scraper.py
+Resolve at runtime:
+```bash
+find ~/.claude/plugins/cache -path '*/impressum-leadgen/*/scripts/impressum_scraper.py' 2>/dev/null | head -1
 ```
 
 ## Full CLI Reference

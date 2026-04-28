@@ -1,12 +1,12 @@
 {
   "name": "impressum-leadgen",
   "version": "1.0.0",
-  "description": "ICP-scored Impressum scraper for German B2B industrial companies",
-  "author": {
-    "name": "Tom Adomeit"
-  },
-  "homepage": "https://github.com/Tomadm21/impressum-leadgen",
-  "repository": "https://github.com/Tomadm21/impressum-leadgen",
-  "commands": "./commands",
-  "agents": "./agents"
+  "description": "Scrapes German Impressum pages, scores companies against a B2B industrial ICP (Maschinenbau, Messtechnik, Anlagenbau), and writes results to Google Sheets or CSV.",
+  "author": "Tom Adomeit",
+  "commands": [
+    "commands/impressum.md"
+  ],
+  "agents": [
+    "agents/scraper-runner.md"
+  ]
 }

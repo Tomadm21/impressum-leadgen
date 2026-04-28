@@ -2,9 +2,7 @@
   "name": "impressum-leadgen",
   "version": "1.0.0",
   "description": "Scrapes German Impressum pages, scores companies against a B2B industrial ICP (Maschinenbau, Messtechnik, Anlagenbau), and writes results to Google Sheets or CSV.",
-  "author": {
-    "name": "Tom Adomeit"
-  },
+  "author": "Tom Adomeit",
   "commands": [
     "commands/impressum.md"
   ],

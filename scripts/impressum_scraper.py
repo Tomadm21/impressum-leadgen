@@ -173,9 +173,11 @@ def fetch_html(url: str, account_id: str, api_token: str, use_cloudflare: bool =
     html = simple_fetch_html(url)
     if html:
         return html
-    # Fallback: Cloudflare for JS-rendered pages
-    print(f"  [FALLBACK] Cloudflare fuer: {url}")
-    return cf_fetch_html(url, account_id, api_token)
+    # Fallback: Cloudflare for JS-rendered pages (only if credentials present)
+    if account_id and api_token:
+        print(f"  [FALLBACK] Cloudflare fuer: {url}")
+        return cf_fetch_html(url, account_id, api_token)
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -1008,12 +1010,14 @@ def main():
 
     # Load environment
     load_dotenv(args.env_file)
-    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
-    api_token = os.getenv("CLOUDFLARE_API_TOKEN")
+    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID", "")
+    api_token = os.getenv("CLOUDFLARE_API_TOKEN", "")
 
-    if not account_id or not api_token:
-        print("FEHLER: CLOUDFLARE_ACCOUNT_ID und CLOUDFLARE_API_TOKEN muessen in der .env Datei gesetzt sein.")
+    if args.cloudflare and (not account_id or not api_token):
+        print("FEHLER: --cloudflare erfordert CLOUDFLARE_ACCOUNT_ID und CLOUDFLARE_API_TOKEN in ~/.env")
         sys.exit(1)
+    if not account_id or not api_token:
+        print("INFO: Keine Cloudflare-Credentials — verwende nur einfaches HTTP (kein JS-Rendering).")
 
     # Determine mode: CSV or Google Sheets
     is_csv = os.path.isfile(args.source) or args.source.endswith(".csv")

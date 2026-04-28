@@ -1,0 +1,19 @@
+{
+  "name": "impressum-leadgen",
+  "owner": {
+    "name": "Tom Adomeit"
+  },
+  "metadata": {
+    "description": "ICP-scored Impressum scraper for German B2B industrial companies (Maschinenbau, Messtechnik, Anlagenbau)"
+  },
+  "plugins": [
+    {
+      "name": "impressum-leadgen",
+      "source": {
+        "source": "github",
+        "repo": "Tomadm21/impressum-leadgen"
+      },
+      "description": "Scrapes German Impressum pages, scores companies against a B2B industrial ICP (0-100), and exports contact data to Google Sheets or CSV."
+    }
+  ]
+}
